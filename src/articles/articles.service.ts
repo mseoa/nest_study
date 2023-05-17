@@ -10,18 +10,25 @@ export class ArticlesService {
 
   create(createArticleDto: CreateArticleDto) {
     return this.prisma.article.create({ data: createArticleDto });
-    }
+  }
 
   findAll() {
-    return this.prisma.article.findMany({ where: { published: true } });
+    return this.prisma.article.findMany({
+      where: { published: true },
+      include: { author: true },
+    });
   }
 
   findAllDrafts() {
     return this.prisma.article.findMany({ where: { published: false } });
   }
 
-  async findOne(id: number) { // 에러 핸들링할 때 앞에 async 붙여줌
-    return this.prisma.article.findUnique({ where: { id } });
+  async findOne(id: number) {
+    // 에러 핸들링할 때 앞에 async 붙여줌
+    return this.prisma.article.findUnique({
+      where: { id },
+      include: { author: true },
+    });
   }
 
   update(id: number, updateArticleDto: UpdateArticleDto) {
@@ -34,6 +41,6 @@ export class ArticlesService {
   remove(id: number) {
     return this.prisma.article.delete({
       where: { id },
-    })
+    });
   }
 }
