@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+  ParseIntPipe, // intercept string param and parse to int
+} from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -17,24 +27,25 @@ export class ArticlesController {
   }
 
   @Get()
-  @ApiCreatedResponse({ type: ArticleEntity,isArray: true })
+  @ApiCreatedResponse({ type: ArticleEntity, isArray: true })
   findAll() {
     return this.articlesService.findAll();
   }
 
   @Get('drafts') // article/drafts
-  @ApiCreatedResponse({ type: ArticleEntity,isArray: true })
+  @ApiCreatedResponse({ type: ArticleEntity, isArray: true })
   findAllDrafts() {
     return this.articlesService.findAllDrafts();
   }
 
   @Get(':id')
   @ApiCreatedResponse({ type: ArticleEntity })
-  async findOne(@Param('id') id: string) { // 에러핸들링하기전에 async
-    const article = await this.articlesService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    // 에러핸들링하기전에 async
+    const article = await this.articlesService.findOne(id);
 
-    if (!article){
-      throw new NotFoundException(`id가 ${id}인 article이 존재하지 않습니다.`)
+    if (!article) {
+      throw new NotFoundException(`id가 ${id}인 article이 존재하지 않습니다.`);
     }
 
     return article;
@@ -42,13 +53,16 @@ export class ArticlesController {
 
   @Patch(':id')
   @ApiCreatedResponse({ type: ArticleEntity })
-  update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateArticleDto: UpdateArticleDto,
+  ) {
     return this.articlesService.update(+id, updateArticleDto);
   }
 
   @Delete(':id')
   @ApiCreatedResponse({ type: ArticleEntity })
-  remove(@Param('id') id: string) {
-    return this.articlesService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.articlesService.remove(id);
   }
 }
