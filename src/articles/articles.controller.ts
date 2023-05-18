@@ -12,7 +12,7 @@ import {
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ArticleEntity } from './entities/article.entity';
 
 @Controller('articles')
@@ -27,21 +27,21 @@ export class ArticlesController {
   }
 
   @Get()
-  @ApiCreatedResponse({ type: ArticleEntity, isArray: true })
+  @ApiOkResponse({ type: ArticleEntity, isArray: true })
   async findAll() {
     const articles = await this.articlesService.findAll();
     return articles.map((article)=>new ArticleEntity(article))
   }
 
   @Get('drafts') // article/drafts
-  @ApiCreatedResponse({ type: ArticleEntity, isArray: true })
+  @ApiOkResponse({ type: ArticleEntity, isArray: true })
   async findAllDrafts() {
     const drafts = await this.articlesService.findAllDrafts();
     return drafts.map((draft) => new ArticleEntity(draft));
   }
 
   @Get(':id')
-  @ApiCreatedResponse({ type: ArticleEntity })
+  @ApiOkResponse({ type: ArticleEntity })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     // 에러핸들링하기전에 async
     const article = await this.articlesService.findOne(id);
