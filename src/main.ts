@@ -15,6 +15,7 @@ async function bootstrap() {
     .setTitle('nest_study')
     .setDescription('nest_study API')
     .setVersion('0.1')
+    .addBearerAuth() // add a token
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
